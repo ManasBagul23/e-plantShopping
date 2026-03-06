@@ -1,14 +1,14 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { removeItem, updateQuantity } from "../redux/CartSlice";
+import { Link } from "react-router-dom";
 
 const CartItem = () => {
 
-  const cartItems = useSelector(state => state.cart.items);
-
+  const cartItems = useSelector((state) => state.cart.items);
   const dispatch = useDispatch();
 
-  const increase = (item) => {
+  const increaseQuantity = (item) => {
     dispatch(
       updateQuantity({
         id: item.id,
@@ -17,8 +17,11 @@ const CartItem = () => {
     );
   };
 
-  const decrease = (item) => {
-    if (item.quantity > 1) {
+  const decreaseQuantity = (item) => {
+
+    if (item.quantity === 1) {
+      dispatch(removeItem(item.id));
+    } else {
       dispatch(
         updateQuantity({
           id: item.id,
@@ -26,52 +29,81 @@ const CartItem = () => {
         })
       );
     }
+
   };
 
   const calculateTotalAmount = () => {
     return cartItems.reduce(
-      (total, item) =>
-        total + item.price * item.quantity,
+      (total, item) => total + item.price * item.quantity,
       0
     );
   };
 
+  const handleCheckout = () => {
+    alert("Checkout Coming Soon!");
+  };
+
   return (
-    <div>
+    <div className="cart-container">
 
       <h1>Shopping Cart</h1>
 
-      {cartItems.map(item => (
+      {cartItems.length === 0 ? (
+        <p>Your cart is empty.</p>
+      ) : (
 
-        <div key={item.id} className="cart-item">
+        cartItems.map((item) => (
 
-          <img src={item.image} width="100" />
+          <div key={item.id} className="cart-item">
 
-          <h3>{item.name}</h3>
+            <img src={item.image} alt={item.name} width="120" />
 
-          <p>Price: ${item.price}</p>
+            <div className="cart-details">
 
-          <p>Total: ${item.price * item.quantity}</p>
+              <h3>{item.name}</h3>
 
-          <button onClick={() => decrease(item)}>-</button>
+              <p>Unit Price: ${item.price}</p>
 
-          <span>{item.quantity}</span>
+              <p>Total Price: ${item.price * item.quantity}</p>
 
-          <button onClick={() => increase(item)}>+</button>
+              <div className="quantity-controls">
 
-          <button onClick={() => dispatch(removeItem(item.id))}>
-            Delete
-          </button>
+                <button onClick={() => decreaseQuantity(item)}>-</button>
 
-        </div>
+                <span>{item.quantity}</span>
 
-      ))}
+                <button onClick={() => increaseQuantity(item)}>+</button>
+
+              </div>
+
+              <button
+                onClick={() => dispatch(removeItem(item.id))}
+              >
+                Delete
+              </button>
+
+            </div>
+
+          </div>
+
+        ))
+
+      )}
 
       <h2>Total Cart Amount: ${calculateTotalAmount()}</h2>
 
-      <button>Checkout (Coming Soon)</button>
+      <button onClick={handleCheckout}>
+        Checkout
+      </button>
 
-      <button>Continue Shopping</button>
+      <br />
+      <br />
+
+      <Link to="/plants">
+        <button>
+          Continue Shopping
+        </button>
+      </Link>
 
     </div>
   );
