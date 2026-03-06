@@ -11,7 +11,12 @@ body {
   color: #333;
   line-height: 1.6;
 }
-
+.background-image {
+  background-image: url("https://images.unsplash.com/photo-1501004318641-b39e6451bec6");
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+}
 .app {
   min-height: 100vh;
 }
